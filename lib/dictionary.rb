@@ -1,6 +1,7 @@
+require './lib/definition.rb'
+require './lib/word.rb'
 class Term
 
-  @@list_of_terms = {}
   @@list_of_term_objects = []
 
   def Term.clear
@@ -10,8 +11,8 @@ class Term
 
   def Term.list
     string = ''
-    @@list_of_terms.each do |key, value|
-      string += key + " "
+    @@list_of_term_objects.each do |object|
+      string += object.word + " "
     end
   string[0..-2]
   end
@@ -22,48 +23,41 @@ class Term
 
   def Term.search(word)
     @@list_of_term_objects.each do |term|
-      word == term.word
+      if word == term.word
       return term
+     end
     end
   end
 
-
   def Term.def(word)
-    @@list_of_terms.each do |key,value|
-      if key.include?(word)
-      return value
+   @@list_of_term_objects.each do |term|
+      if word == term.word
+      return term.definition
       end
     end
   end
 
-  def initialize(word, *definition)
-    @word = word
-    # words.each do |word|
-    #   @word << word
-    # end
-
-    @definition = definition
+  def initialize(word, language, definition)
+    @word = Word.new(word, language, definition)
 
     @@list_of_term_objects << self
-    @@list_of_terms[@word] = @definition
   end
 
   def word
-    @word
+    @word.word
   end
 
   def definition
-    @definition
+    @word.definition.definition
   end
 
-
-  def delete(word)
-    @@list_of_terms.delete(word)
+  def redefine(newdef)
+    @word.definition.definition = newdef
   end
 
-  def edit(word, definition)
-    @@list_of_terms[word] = definition
+  def delete(passedword)
+    term_to_delete = Term.search(passedword)
+    @@list_of_term_objects.delete_if {|term| term == term_to_delete}
   end
-
 
 end
